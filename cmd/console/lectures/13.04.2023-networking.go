@@ -8,7 +8,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 )
 
@@ -68,7 +67,7 @@ func main() {
 		text := stdin.Text()
 
 		fmt.Println("Making POST request to the todo-service...")
-		resp, err := http.PostForm("http://13.235.247.96:4000/tasks", url.Values{"text": {text}})
+		//resp, err := http.PostForm("http://13.235.247.96:4000/tasks", url.Values{"text": {text}})
 
 		requestBody, err := json.Marshal(map[string]string{"text": text})
 		if err != nil {
@@ -77,7 +76,7 @@ func main() {
 
 		requestBuffer := bytes.NewReader(requestBody)
 
-		resp, err = http.Post("http://13.235.247.96:4000/tasks", "application/json", requestBuffer)
+		resp, err := http.Post("http://13.235.247.96:4000/tasks", "application/json", requestBuffer)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -88,6 +87,20 @@ func main() {
 		}
 		//fmt.Println(body)
 		fmt.Println(string(bodyOriginal))
+
+		var bodyAsObject interface{}
+		json.Unmarshal(bodyOriginal, &bodyAsObject)
+
+		fmt.Println("\nUnmarshalled response body:")
+		fmt.Println(bodyAsObject)
+
+		bodyPrettified, err := json.MarshalIndent(bodyAsObject, "", "\t")
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("\nMarshalled response body with indents:")
+		//fmt.Println(bodyPrettified)
+		fmt.Println(string(bodyPrettified))
 	}
 
 }
