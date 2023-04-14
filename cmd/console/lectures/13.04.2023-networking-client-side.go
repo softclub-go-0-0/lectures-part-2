@@ -27,7 +27,7 @@ func main() {
 		return
 	case 1:
 		fmt.Println("Making GET request to the todo-service...")
-		resp, err := http.Get("http://13.235.247.96:4000/tasks")
+		resp, err := http.Get("http://127.0.0.1:4000/")
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -50,7 +50,7 @@ func main() {
 		json.Unmarshal(bodyOriginal, &bodyAsObject)
 
 		fmt.Println("\nUnmarshalled response body:")
-		fmt.Println(bodyAsObject)
+		fmt.Printf("%v\t%T", bodyAsObject, bodyAsObject)
 
 		bodyPrettified, err := json.MarshalIndent(bodyAsObject, "", "\t")
 		if err != nil {
