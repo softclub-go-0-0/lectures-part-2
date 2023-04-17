@@ -1,6 +1,10 @@
 package models
 
-import "database/sql"
+import (
+	"database/sql"
+	"gorm.io/gorm"
+	"time"
+)
 
 type Teacher struct {
 	ID        int64
@@ -55,4 +59,13 @@ type Group struct {
 	CreatedAt   sql.NullTime
 	UpdatedAt   sql.NullTime
 	DeletedAt   sql.NullTime
+}
+
+type User struct {
+	ID        uint      `json:"id" gorm:"primarykey"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time
+	DeletedAt gorm.DeletedAt ` gorm:"index"`
 }
