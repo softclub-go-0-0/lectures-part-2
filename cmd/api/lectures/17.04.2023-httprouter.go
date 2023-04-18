@@ -20,12 +20,8 @@ const (
 	DBName     = "blog_service"
 )
 
-type handlers struct {
+type handler struct {
 	DB *gorm.DB
-}
-
-func newHandlers(db *gorm.DB) (h handlers) {
-	return handlers{DB: db}
 }
 
 func main() {
@@ -36,7 +32,7 @@ func main() {
 	}
 	fmt.Println("Successfully connected")
 
-	h := handlers{DB: db}
+	h := handler{DB: db}
 
 	db.AutoMigrate(
 		&models.User{},
@@ -54,7 +50,7 @@ func main() {
 	log.Fatal(http.ListenAndServe(":4000", router))
 }
 
-func (h *handlers) GetUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func (h *handler) GetUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	var users []models.User
 
 	h.DB.Find(&users)
@@ -67,11 +63,11 @@ func (h *handlers) GetUsers(w http.ResponseWriter, r *http.Request, _ httprouter
 	w.Write(usersJSON)
 }
 
-func (h *handlers) GetUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (h *handler) GetUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	fmt.Fprintf(w, "you try to see a task %s of user %s\n", ps.ByName("id"), ps.ByName("id"))
 }
 
-func (h *handlers) CreateUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (h *handler) CreateUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	defer r.Body.Close()
 
 	body, _ := io.ReadAll(r.Body)
@@ -81,21 +77,19 @@ func (h *handlers) CreateUser(w http.ResponseWriter, r *http.Request, ps httprou
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(user)
-	fmt.Println("test 2")
+
 	res := h.DB.Create(&user)
 	if res.Error != nil {
 		log.Fatal(res.Error)
 	}
-	fmt.Println("test 3")
 
-	w.Write([]byte("Ok"))
+	w.Write([]byte(fmt.Sprintf("Successfully created a user. ID: %d", user.ID)))
 }
 
-func (h *handlers) UpdateUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (h *handler) UpdateUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	fmt.Fprintf(w, "you try to update %s\n", ps.ByName("id"))
 }
 
-func (h *handlers) DeleteUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+func (h *handler) DeleteUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	fmt.Fprintf(w, "you try to delete %s\n", ps.ByName("id"))
 }
