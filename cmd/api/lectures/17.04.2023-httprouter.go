@@ -52,8 +52,14 @@ func main() {
 
 func (h *handler) GetUsers(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	var users []models.User
+	query := r.URL.Query()
+	search := query.Get("name")
 
-	h.DB.Find(&users)
+	if search != "" {
+		h.DB.Where("name ilike ?", "%"+search+"%").Find(&users)
+	} else {
+		h.DB.Find(&users)
+	}
 	usersJSON, err := json.Marshal(users)
 	if err != nil {
 		log.Fatal(err)
