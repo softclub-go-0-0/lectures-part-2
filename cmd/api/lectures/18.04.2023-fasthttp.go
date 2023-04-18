@@ -12,7 +12,7 @@ func Index(ctx *fasthttp.RequestCtx) {
 	ctx.SetContentType("application/json")
 	ctx.SetStatusCode(fasthttp.StatusOK)
 
-	users := []string{"rvasiliy"}
+	users := []string{"rvasiliy", "anotheruser"}
 	body, _ := json.Marshal(users)
 
 	ctx.SetBody(body)
